@@ -21,14 +21,15 @@
 
 ;; MELPA & Package Management 
 ;; ###########################################
+;; for Windows: install dependencies file
+;; emacs-25-x86_64-deps.zip from FTP server
 
 ;; configure MELPA
-;; without https Win Emacs showed issues
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -39,6 +40,11 @@
   (require 'use-package))
 (require 'diminish)
 (require 'bind-key)
+
+
+
+
+;;  Custom set variables
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
