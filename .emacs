@@ -42,12 +42,11 @@
 (require 'bind-key)
 
 ; configure recent-files
-(use-package recentf  
- :init   
- (recentf-mode 1)  
- :config   
+(use-package recentf
+ :init
+ (recentf-mode 1) 
+ :config
  (setq recentf-max-menu-items 15))
-
 
 ;;  Custom set variables
 (custom-set-variables
