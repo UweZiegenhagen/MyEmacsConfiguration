@@ -41,7 +41,12 @@
 (require 'diminish)
 (require 'bind-key)
 
-
+; configure recent-files
+(use-package recentf  
+ :init   
+ (recentf-mode 1)  
+ :config   
+ (setq recentf-max-menu-items 15))
 
 
 ;;  Custom set variables
