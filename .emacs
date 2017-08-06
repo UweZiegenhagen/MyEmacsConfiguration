@@ -5,16 +5,6 @@
 ;; ###########################################
 
 
-
-;; keep my personal settings not in the .emacs file
-;; http://www.mygooglest.com/fni/dot-emacs.html
-;; load it if it exists
-(let ((personal-settings "~/personal.init"))
-(when (file-exists-p personal-settings)
-      (load personal-settings)))
-
-
-
 ;; make UTF-8 the default encoding
 (set-language-environment "UTF-8")
 
@@ -104,7 +94,8 @@
          ("C-c C-w" . org-refile)
          ("C-c j" . org-clock-goto)
          ("C-c C-x C-o" . org-clock-out))
-  :init ()
+  :init
+  (find-file "~/Dropbox/orgmode.org")
   :config
   ;; Start Calendar View with Monday
   (setq calendar-week-start-day 1)
@@ -134,8 +125,14 @@
 )
 
 
+;; Keep my personal settings not in the .emacs file
+;; http://www.mygooglest.com/fni/dot-emacs.html
+;; load it if it exists
+(let ((personal-settings (expand-file-name "~/personal.el")))
+ (when (file-exists-p personal-settings)
+   (load personal-settings)))
 
-
+(find-file "~/Dropbox/orgmode.org")
 
 ;;  Custom set variables
 (custom-set-variables
