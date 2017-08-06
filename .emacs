@@ -4,6 +4,8 @@
 ;; Some general Configuration
 ;; ###########################################
 
+;; no startup screen
+(setq inhibit-startup-screen t)
 
 ;; make UTF-8 the default encoding
 (set-language-environment "UTF-8")
@@ -95,7 +97,6 @@
          ("C-c j" . org-clock-goto)
          ("C-c C-x C-o" . org-clock-out))
   :init
-  (find-file "~/Dropbox/orgmode.org")
   :config
   ;; Start Calendar View with Monday
   (setq calendar-week-start-day 1)
@@ -121,8 +122,7 @@
   ;; let's define all python code as safe
   (defun my-org-confirm-babel-evaluate (lang body)
   (not (string= lang "python")))
-  (setq org-confirm-babel-evaluate nil)
-)
+  (setq org-confirm-babel-evaluate nil))
 
 
 ;; Keep my personal settings not in the .emacs file
@@ -132,7 +132,7 @@
  (when (file-exists-p personal-settings)
    (load personal-settings)))
 
-(find-file "~/Dropbox/orgmode.org")
+;;(find-file "~/Dropbox/orgmode.org")
 
 ;;  Custom set variables
 (custom-set-variables
@@ -146,4 +146,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:family "Lucida Sans" :foundry "outline" :slant normal :weight normal :height 158 :width normal)))))
