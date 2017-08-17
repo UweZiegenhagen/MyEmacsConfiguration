@@ -4,13 +4,25 @@
 ;; Some general Configuration
 ;; ###########################################
 
-;; no startup screen
+;; Do no show the startup screen
 (setq inhibit-startup-screen t)
 
-;; make UTF-8 the default encoding
+;; Make UTF-8 the default encoding
 (set-language-environment "UTF-8")
 
-;; duplicate current line, bind command to Ctrl-d
+;; Automatically reload buffers if they were changed outside Emacs
+(global-auto-revert-mode t)  
+
+;; No more "yes-or-no"-questions, "y-or-n" is sufficent
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Stop creating backup~ files
+(setq make-backup-files nil) 
+
+;; Stop creating #autosave# files
+(setq auto-save-default nil) 
+
+;; Define a function to duplicate the current line and bind command to Ctrl-d
 ;; from http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs
 (defun duplicate-line (arg)
   "Duplicate current line, leaving point in lower line."
@@ -42,23 +54,10 @@
 (global-set-key "\C-d" 'duplicate-line)
 
 
-
-;; Autoload buffers if they were changed outside Emacs
-(global-auto-revert-mode t)  
-
-;; no more "yes-or-no"-questions, "y-or-n" is sufficent
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;; stop creating backup~ files
-(setq make-backup-files nil) 
-
-;; stop creating #autosave# files
-(setq auto-save-default nil) 
-
 ;; MELPA & Package Management 
 ;; ###########################################
-;; for Windows: install dependencies file
-;; emacs-25-x86_64-deps.zip from FTP server
+;; for Windows: install the dependencies file
+;; emacs-25-x86_64-deps.zip from the GNU Emacs  FTP server
 
 ;; configure MELPA
 (require 'package)
@@ -77,15 +76,101 @@
   (require 'diminish)
   (require 'bind-key)
 
-; configure recent-files
+;; should automatically install required packages
+(setq use-package-always-ensure t)
+
+; Configure the recent-files
 (use-package recentf
  :init
  (recentf-mode 1) 
  :config
- (setq recentf-max-menu-items 15))
+ (setq recentf-max-menu-items 10))
 
 
-;; orgmode following  https://github.com/cocreature/dotfiles/blob/master/emacs/.emacs.d/emacs.org
+;; https://emacs.stackexchange.com/questions/18881/use-package-for-a-mode
+;;(require 'yasnippet)
+;;(yas-global-mode 1)
+
+(use-package yasnippet
+ :commands (yas-minor-mode) ; autoload `yasnippet' when `yas-minor-mode' is called
+                                        ; using any means: via a hook or by user
+                                        ; Feel free to add more commands to this
+                                        ; list to suit your needs.
+ :init ; stuff to do before requiring the package
+   (progn
+     (add-hook 'prog-mode-hook #'yas-minor-mode)
+     (add-hook 'org-mode-hook #'yas-minor-mode)
+     )
+ :config ; stuff to do after requiring the package
+  (progn
+    (yas-reload-all))
+  )
+
+
+;; Helm configuration
+;; https://github.com/senny/emacs.d/blob/master/init.el
+(use-package helm-core
+  :ensure t)
+(use-package helm
+  :ensure t
+  :bind (("M-a" . helm-M-x)
+         ("C-x C-f" . helm-find-files)
+         ("C-x f" . helm-recentf)
+         ("C-SPC" . helm-dabbrev)
+         ("M-y" . helm-show-kill-ring)
+         ("C-x b" . helm-buffers-list))
+  :bind (:map helm-map
+	      ("M-i" . helm-previous-line)
+	      ("M-k" . helm-next-line)
+	      ("M-I" . helm-previous-page)
+	      ("M-K" . helm-next-page)
+	      ("M-h" . helm-beginning-of-buffer)
+	      ("M-H" . helm-end-of-buffer))
+  :config (progn
+	    (setq helm-buffers-fuzzy-matching t)
+            (helm-mode 1)))
+(use-package helm-descbinds
+  :ensure t
+  :bind ("C-h b" . helm-descbinds))
+(use-package helm-files
+  :bind (:map helm-find-files-map
+	      ("M-i" . nil)
+	      ("M-k" . nil)
+	      ("M-I" . nil)
+	      ("M-K" . nil)
+	      ("M-h" . nil)
+	      ("M-H" . nil)))
+(use-package helm-swoop
+  :ensure t
+  :bind (("M-m" . helm-swoop)
+	 ("M-M" . helm-swoop-back-to-last-point))
+  :init
+  (bind-key "M-m" 'helm-swoop-from-isearch isearch-mode-map))
+(use-package helm-ag
+  :ensure helm-ag
+  :bind ("M-p" . helm-projectile-ag)
+  :commands (helm-ag helm-projectile-ag)
+  :init (setq helm-ag-insert-at-point 'symbol
+	      helm-ag-command-option "--path-to-ignore ~/.agignore"))
+
+(use-package projectile
+  :ensure t
+;  :bind (("C-p s" . projectile-switch-open-project)
+;	 ("C-x p" . projectile-switch-project))
+  :config
+  (projectile-global-mode)
+  (setq projectile-enable-caching t))
+
+(use-package helm-projectile
+  :ensure t
+  :bind ("M-t" . helm-projectile-find-file)
+  :config
+(helm-projectile-on))
+
+
+
+;; Configure orgmode
+;; following  https://github.com/cocreature/dotfiles/blob/master/emacs/.emacs.d/emacs.org
 (use-package org
   :ensure t
   :mode ("\\.org\\'" . org-mode)
@@ -107,40 +192,36 @@
         ("FEEDBACK" . (:foreground "brown" :weight bold))
         ("VERIFY" . (:foreground "orange" :weight bold))
         ("POSTPONED" . (:foreground "LightSalmon4" :weight bold)) 
-        ("DONE" . (:foreground "MediumSeaGreen" :weight bold)) 
-	("DELEGATED" . (:foreground "ForestGreen" :weight bold))      
-	("CANCELLED" . (:foreground "goldenrod" :weight bold))
+        ("DONE" . (:foreground "MediumSeaGreen" :weight bold))
+        ("DELEGATED" . (:foreground "ForestGreen" :weight bold))      
+        ("CANCELLED" . (:foreground "goldenrod" :weight bold))
         ))
+  
   (setq 
    calendar-day-name-array ["Sonntag" "Montag" "Dienstag" "Mittwoch" "Donnerstag" "Freitag" "Samstag"]
    calendar-month-name-array ["Januar" "Februar" "März" "April" "Mai" "Juni" "Juli" "August" "September" "Oktober" "November" "Dezember"])
 
-  ;; define some additional status 
-  ;; http://orgmode.org/org.html#TODO-extensions
+  ;; Define some additional status, see http://orgmode.org/org.html#TODO-extensions
   (setq org-todo-keywords '((sequence "TODO" "PROGRESSING" "FEEDBACK" "VERIFY" "POSTPONED" "|" "DELEGATED" "CANCELLED" "DONE")))
 
-  ;; let's define all python code as safe
+  ;; let's define that all embedded Python code is safe
   (defun my-org-confirm-babel-evaluate (lang body)
   (not (string= lang "python")))
   (setq org-confirm-babel-evaluate nil))
 
-
-;; Keep my personal settings not in the .emacs file
+;; Keep my personal settings not in the public .emacs file
 ;; http://www.mygooglest.com/fni/dot-emacs.html
-;; load it if it exists
+;; load the personal.el if it exists
 (let ((personal-settings (expand-file-name "~/personal.el")))
  (when (file-exists-p personal-settings)
    (load personal-settings)))
 
-;;(find-file "~/Dropbox/orgmode.org")
-
-;;  Custom set variables
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (use-package))))
+ '(package-selected-packages (quote (yasnippet use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
