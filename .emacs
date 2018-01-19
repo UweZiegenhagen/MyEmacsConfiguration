@@ -75,7 +75,7 @@
 
 (eval-when-compile
   (require 'use-package))
-  (require 'diminish)
+  ;(require 'diminish)
   (require 'bind-key)
 
 ;; should automatically install required packages
@@ -112,8 +112,8 @@
 ;; Helm configuration
 ;; based on https://github.com/senny/emacs.d/blob/master/init.el
 
-(use-package helm-core
-  :ensure t)
+;(use-package helm-core
+;  :ensure t)
 (use-package helm
   :ensure t
   :bind (("M-a" . helm-M-x)
